@@ -25,6 +25,12 @@
   <ItemGroup>
     <Content Include="azuredeploy.json" />
     <Content Include="azuredeploy.parameters.json" />
+    <None Include="data\deployAntimalware.json" />
+    <None Include="data\encryptVM.json" />
+    <None Include="data\ilbDeployment.json" />
+    <None Include="data\vmDiagnostics.json" />
+    <None Include="data\wapfarm.json" />
+    <None Include="data\wapVm.json" />
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
