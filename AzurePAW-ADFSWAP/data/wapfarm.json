@@ -8,12 +8,7 @@
         "description": "The VM name of ADFS Server"
       }
     },
-    "primaryADFSserver": {
-      "type": "string",
-      "metadata": {
-        "description": "The VM name of the Primary ADFS Server"
-      }
-    },
+    
     "domainName": {
       "type": "string",
       "metadata": {
@@ -81,6 +76,7 @@
     "domainSuffix": "[split(parameters('domainName'),'.')[1]]",
     "CACommonName": "[concat(variables('shortDomainName'),' CA')]",
     "ADFSDNSName": "[concat('fs.',parameters('domainName'))]",
+    "primaryADFSserver": "placeholder",
     "ModulesURL": "[concat(parameters('assetLocationStorageAccount'),'/scripts/DeployADFS.zip')]",
     "ConfigurationFunctionOLD": "DeployADFS.ps1\\InstallADFSFarm",
     "ConfigurationFunction": "[parameters('configurationFunction')]",
@@ -110,7 +106,7 @@
             "ADFSServiceCert": "[parameters('ADFSServiceCert')]",
             "TargetDIADOU": "[variables('TargetDIADOU')]",
             "ComputerDN": "[variables('ComputerDN')]",
-            "PrimaryADFSServer": "[parameters('primaryADFSserver')]",
+            "PrimaryADFSServer": "[variables('primaryADFSserver')]",
             "adminCreds": {
               "userName": "[parameters('adminUserName')]",
               "password": "PrivateSettingsRef:adminPassword"

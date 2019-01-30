@@ -122,21 +122,21 @@
       "metadata": {
         "description": "IP Address for WAP VM 1"
       },
-      "defaultValue": "10.0.X.4"
+      "defaultValue": "10.0.6.4"
     },
     "wapVM2IPAddress": {
       "type": "string",
       "metadata": {
         "description": "IP Address for WAP VM 2"
       },
-      "defaultValue": "10.0.X.5"
+      "defaultValue": "10.0.6.5"
     },
     "ILBforWAP": {
       "type": "string",
       "metadata": {
         "description": "IP Address for WAP farm ILB"
       },
-      "defaultValue": "10.0.X.100"
+      "defaultValue": "10.0.6.100"
     },
     "ScriptsLocation": {
       "type": "string",
@@ -349,7 +349,7 @@
       }
     },
     {
-      "comments": "Deploy ADFS VM 2",
+      "comments": "Deploy WAP VM 2",
       "name": "[variables('wapVm2Deployment')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
