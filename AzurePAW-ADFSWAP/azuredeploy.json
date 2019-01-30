@@ -431,9 +431,6 @@
           "adfsVMName": {
             "value": "[variables('wapVMName')]"
           },
-          "primaryADFSserver": {
-            "value": "[variables('wapVMName')]"
-          },
           "domainName": {
             "value": "[parameters('domainName')]"
           },
@@ -494,9 +491,6 @@
         "parameters": {
           "adfsVMName": {
             "value": "[variables('wapVM2Name')]"
-          },
-          "primaryADFSserver": {
-            "value": "[variables('wapVMName')]"
           },
           "domainName": {
             "value": "[parameters('domainName')]"
