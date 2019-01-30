@@ -428,7 +428,7 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "adfsVMName": {
+          "wapVMName": {
             "value": "[variables('wapVMName')]"
           },
           "domainName": {
@@ -489,7 +489,7 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "adfsVMName": {
+          "wapVMName": {
             "value": "[variables('wapVM2Name')]"
           },
           "domainName": {
