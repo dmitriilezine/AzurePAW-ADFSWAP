@@ -43,7 +43,7 @@
         "description": "Specify the name for the vNet to whcih this server will be deployed."
       }
     },
-    "existingVirtualNetworkResourceGroup": {
+    "existingVirtualNetworkRG": {
       "type": "string",
       "defaultValue": "Add vNet RG Name",
       "metadata": {
@@ -57,20 +57,13 @@
         "description": "Name of the subnet in the virtual network you want to put this VM"
       }
     },
-    "subscriptionID": {
-      "type": "string",
-      "metadata": {
-        "description": "Subscription ID is used to provide access path to the Key Vault with secrets to access deployment scripts"
-      },
-      "defaultValue": "Subscription ID for Secrets Key Vault that provide access to the deployment scripts."
-    },
-    "secretsVaultName": {
+    "DepSecretsVaultName": {
       "type": "string",
       "metadata": {
         "description": "The name of the Key Vault where secrets are stored"
       }
     },
-    "secretsKeyVaultRG": {
+    "DepSecretsKeyVaultRG": {
       "type": "string",
       "metadata": {
         "description": "The name of the RG where Secrets Key Vault is stored"
@@ -95,8 +88,7 @@
       "allowedValues": [
         "Standard_DS12_v2",
         "Standard_DS2_v2",
-        "Standard_D8S_v3",
-        "Standard_A2"
+        "Standard_D8S_v3"
       ],
       "metadata": {
         "description": "VM Size. The bigger it is, the more $ you will spend."
@@ -170,6 +162,46 @@
       "metadata": {
         "description": "ADE Key Vault RG"
       }
+    },
+    "wapAvailabiltySet": {
+      "type": "string",
+      "metadata": {
+        "description": "Availability Set name for WAP servers"
+      },
+      "defaultValue": "wapAvailabiltySet"
+    },
+    "subscriptionID": {
+      "type": "string",
+      "metadata": {
+        "description": "Subscription ID is used to provide access path to the Secrets Key Vault"
+      },
+      "defaultValue": "Subscription ID for Secrets Key Vault that provide access to the deployment scripts."
+    },
+    "saSecretsVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the Key Vault where secrets are stored for accessing deployment scripts"
+      }
+    },
+    "saSecretsKeyVaultRG": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the RG where Secrets Key Vault is stored"
+      }
+    },
+    "saSecretKeyName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the secret that holds key for Storage account"
+      },
+      "defaultValue": "AzurePAWPOC1SAKey2"
+    },
+    "saSecretSASName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the secret that holds SAS for Storage account"
+      },
+      "defaultValue": "AzurePAWPOC1SAS"
     }
   },
   "variables": {
@@ -177,8 +209,10 @@
     "assetLocationStorageAccount": "[parameters('ScriptsLocation')]",
     "VMSize": "[parameters('VirtualMachineSize')]",
     "OSVersion": "2016-Datacenter",
+    "imageOffer": "WindowsServer",
+    "imagePublisher": "MicrosoftWindowsServer",
 
-    "wapSsubnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('WAPSubnetName'))]",
+    "wapSsubnetID": "[resourceId(parameters('existingVirtualNetworkRG'), 'Microsoft.Network/virtualNetworks/subnets', parameters('existingVirtualNetworkName'), parameters('WAPSubnetName'))]",
 
     "WAPIpAddress": "[parameters('wapVM1IPAddress')]",
     "WAP2IpAddress": "[parameters('wapVM2IPAddress')]",
@@ -232,19 +266,20 @@
     "ouPathNone": "",
 
     "configurationFunctionDSC": "DeployADFS.ps1\\InstallWebApplicationProxy",
+    
+    "DepSecretsVaultName": "[parameters('DepSecretsVaultName')]",
+    "DepSecretsKeyVaultRG": "[parameters('DepSecretsKeyVaultRG')]",
+    "DepSecretskeyVaultID": "[concat('/subscriptions/', parameters('subscriptionID'), '/resourceGroups/', variables('DepSecretsKeyVaultRG'), '/providers/Microsoft.KeyVault/vaults/', variables('DepSecretsVaultName'))]",
+    "CertForADFS": "[concat('https://', parameters('DepSecretsVaultName'), '.vault.azure.net:443/secrets/', parameters('ADFSCertID'))]",
 
-    "secretsVaultName": "[parameters('secretsVaultName')]",
-    "secretName": "AzurePAWPOC1SAKey2",
-    "secretnameSASurl": "AzurePAWPOC1SAS",
-    "secretsKeyVaultRG": "[parameters('secretsKeyVaultRG')]",
+    "secretsVaultName": "[parameters('saSecretsVaultName')]",
+    "secretName": "[parameters('saSecretKeyName')]",
+    "secretnameSASurl": "[parameters('saSecretSASName')]",
+    "secretsKeyVaultRG": "[parameters('saSecretsKeyVaultRG')]",
     "secretskeyVaultID": "[concat('/subscriptions/', parameters('subscriptionID'), '/resourceGroups/', variables('secretsKeyVaultRG'), '/providers/Microsoft.KeyVault/vaults/', variables('secretsVaultName'))]",
-    "CertForADFS": "[concat('https://', parameters('secretsVaultName'), '.vault.azure.net:443/secrets/', parameters('ADFSCertID'))]",
 
-    "wapAvailabilitySetName": "wapAvailabiltySet",
-
-    "imageOffer": "WindowsServer",
-    "imagePublisher": "MicrosoftWindowsServer",
-
+    "wapAvailabilitySetName": "[parameters('wapAvailabiltySet')]",
+    
     "ilbWAPName": "[concat('ilbWAP-',resourceGroup().name)]",
     "ilbWAPID": "[resourceId('Microsoft.Network/loadBalancers',variables('ilbWAPName'))]",
 
@@ -331,7 +366,7 @@
             "value": "[variables('wapAvailabilitySetName')]"
           },
           "keyVaultID": {
-            "value": "[variables('secretskeyVaultID')]"
+            "value": "[variables('DepSecretskeyVaultID')]"
           },
           "CertForADFS": {
             "value": "[variables('CertForADFS')]"
@@ -395,7 +430,7 @@
             "value": "[variables('wapAvailabilitySetName')]"
           },
           "keyVaultID": {
-            "value": "[variables('secretskeyVaultID')]"
+            "value": "[variables('DepSecretskeyVaultID')]"
           },
           "CertForADFS": {
             "value": "[variables('CertForADFS')]"
